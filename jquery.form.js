@@ -177,7 +177,7 @@ $.fn.ajaxSubmit = function(options) {
 		var s = $.extend(true, {}, $.extend(true, {}, $.ajaxSettings), opts);
 
 		var id = 'jqFormIO' + (new Date().getTime());
-		var $io = $('<iframe id="' + id + '" name="' + id + '" src="'+ opts.iframeSrc +'" />');
+		var $io = $('<iframe id="' + id + '" name="' + id + '" src="'+ opts.iframeSrc +'" onload="var f=$(this).data(\'form-onload\'); f && f()" />');
 		var io = $io[0];
 
 		$io.css({ position: 'absolute', top: '-1000px', left: '-1000px' });
@@ -262,7 +262,7 @@ $.fn.ajaxSubmit = function(options) {
 		// take a breath so that pending repaints get some cpu time before the upload starts
 		setTimeout(function() {
 			try {
-				io.attachEvent ? io.attachEvent('onload', cb) : io.addEventListener('load', cb, false);
+				$io.data("form-onload", cb);
 				form.submit();
 			} finally {
 				// reset attrs and remove "extra" input elements
@@ -277,7 +277,7 @@ $.fn.ajaxSubmit = function(options) {
 		function cb() {
 			if (cbInvoked++) return;
 
-			io.detachEvent ? io.detachEvent('onload', cb) : io.removeEventListener('load', cb, false);
+			$io.removeData("form-onload", cb);
 
 			var ok = true;
 			try {
