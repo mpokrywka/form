@@ -226,40 +226,41 @@ $.fn.ajaxSubmit = function(options) {
 			}
 		}
 
+		// make sure form attrs are set
+		var t = $form.attr('target'), a = $form.attr('action');
+
+		// update form attrs in IE friendly way
+		form.setAttribute('target',id);
+		if (form.getAttribute('method') != 'POST')
+			form.setAttribute('method', 'POST');
+		if (form.getAttribute('action') != opts.url)
+			form.setAttribute('action', opts.url);
+
+		// ie borks in some cases when setting encoding
+		if (! options.skipEncodingOverride) {
+			$form.attr({
+				encoding: 'multipart/form-data',
+				enctype:  'multipart/form-data'
+			});
+		}
+
+		// support timout
+		if (opts.timeout)
+			setTimeout(function() { timedOut = true; cb(); }, opts.timeout);
+
+		// add "extra" data to form if provided in options
+		var extraInputs = [];
+		if (options.extraData)
+			for (var n in options.extraData)
+				extraInputs.push(
+					$('<input type="hidden" name="'+n+'" value="'+options.extraData[n]+'" />')
+						.appendTo(form)[0]);
+
+		// add iframe to doc and submit the form
+		$io.appendTo('body');
+
 		// take a breath so that pending repaints get some cpu time before the upload starts
 		setTimeout(function() {
-			// make sure form attrs are set
-			var t = $form.attr('target'), a = $form.attr('action');
-
-			// update form attrs in IE friendly way
-			form.setAttribute('target',id);
-			if (form.getAttribute('method') != 'POST')
-				form.setAttribute('method', 'POST');
-			if (form.getAttribute('action') != opts.url)
-				form.setAttribute('action', opts.url);
-
-			// ie borks in some cases when setting encoding
-			if (! options.skipEncodingOverride) {
-				$form.attr({
-					encoding: 'multipart/form-data',
-					enctype:  'multipart/form-data'
-				});
-			}
-
-			// support timout
-			if (opts.timeout)
-				setTimeout(function() { timedOut = true; cb(); }, opts.timeout);
-
-			// add "extra" data to form if provided in options
-			var extraInputs = [];
-			if (options.extraData)
-				for (var n in options.extraData)
-					extraInputs.push(
-						$('<input type="hidden" name="'+n+'" value="'+options.extraData[n]+'" />')
-							.appendTo(form)[0]);
-
-			// add iframe to doc and submit the form
-			$io.appendTo('body');
 			try {
 				io.attachEvent ? io.attachEvent('onload', cb) : io.addEventListener('load', cb, false);
 				form.submit();
