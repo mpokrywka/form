@@ -326,6 +326,7 @@ $.fn.ajaxSubmit = function(options) {
 				data = $.httpData(xhr, opts.dataType);
 			}
 			catch(e){
+				xhr.error = e;
 				ok = false;
 				$.handleError(opts, xhr, 'error', e);
 			}
