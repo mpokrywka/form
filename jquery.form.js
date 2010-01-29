@@ -252,19 +252,18 @@ $.fn.ajaxSubmit = function(options) {
 
 			// add "extra" data to form if provided in options
 			var extraInputs = [];
-			try {
-				if (options.extraData)
-					for (var n in options.extraData)
-						extraInputs.push(
-							$('<input type="hidden" name="'+n+'" value="'+options.extraData[n]+'" />')
-								.appendTo(form)[0]);
+			if (options.extraData)
+				for (var n in options.extraData)
+					extraInputs.push(
+						$('<input type="hidden" name="'+n+'" value="'+options.extraData[n]+'" />')
+							.appendTo(form)[0]);
 
-				// add iframe to doc and submit the form
-				$io.appendTo('body');
+			// add iframe to doc and submit the form
+			$io.appendTo('body');
+			try {
 				io.attachEvent ? io.attachEvent('onload', cb) : io.addEventListener('load', cb, false);
 				form.submit();
-			}
-			finally {
+			} finally {
 				// reset attrs and remove "extra" input elements
 				form.setAttribute('action',a);
 				t ? form.setAttribute('target', t) : $form.removeAttr('target');
