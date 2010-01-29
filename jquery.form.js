@@ -285,7 +285,11 @@ $.fn.ajaxSubmit = function(options) {
 				// extract the server response from the iframe
 				var data, doc;
 
-				doc = io.contentWindow ? io.contentWindow.document : io.contentDocument ? io.contentDocument : io.document;
+				try {
+					doc = io.contentWindow ? io.contentWindow.document : io.contentDocument ? io.contentDocument : io.document;
+				} catch(e) {
+					throw { name: 'DOMException', code: 18 };
+				}
 				
 				var isXml = opts.dataType == 'xml' || doc.XMLDocument || $.isXMLDoc(doc);
 				log('isXml='+isXml);
