@@ -1,4 +1,4 @@
-/*
+/*!
  * jQuery Form Plugin
  * version: 2.36 (07-NOV-2009)
  * + file upload modifications, see http://github.com/mpokrywka/form
